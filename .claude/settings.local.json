@@ -11,7 +11,9 @@
       "Bash(git add .)",
       "Bash(git commit -m \"Initial PWA commit\")",
       "Bash(git add -A)",
-      "Bash(git commit -m \"Fix PWA installability on Android\")"
+      "Bash(git commit -m \"Fix PWA installability on Android\")",
+      "Bash(git branch -M main)",
+      "Bash(git commit -m \"Add visible install button for Android PWA installation\")"
     ],
     "deny": [],
     "ask": []

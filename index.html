@@ -73,6 +73,23 @@
           </div>
         </div>
 
+        <!-- Install Button (shown when PWA is installable) -->
+        <div id="install-container" class="install-container" style="display: none;">
+          <div class="install-banner">
+            <div class="install-info">
+              <span class="material-icons" style="font-size: 32px; color: var(--primary-color);">get_app</span>
+              <div>
+                <div style="font-weight: 600; font-size: 16px;">Install OffGridOne Control</div>
+                <div style="font-size: 14px; color: var(--text-secondary);">Install this app for quick access and offline use</div>
+              </div>
+            </div>
+            <button id="install-button" class="primary-button">
+              <span class="material-icons">download</span>
+              Install
+            </button>
+          </div>
+        </div>
+
         <!-- Update Files Section -->
         <div class="updates-container">
           <!-- File Selection -->
@@ -398,33 +415,76 @@
 
     // PWA Install Prompt Handler
     let deferredPrompt;
+    const installContainer = document.getElementById('install-container');
+    const installButton = document.getElementById('install-button');
+
+    // Debug: Check if already installed
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      console.log('🎉 App is already installed and running in standalone mode');
+    }
 
     window.addEventListener('beforeinstallprompt', (e) => {
-      console.log('✅ beforeinstallprompt fired');
+      console.log('✅ beforeinstallprompt event fired - App is installable!');
+
       // Prevent the mini-infobar from appearing on mobile
       e.preventDefault();
+
       // Stash the event so it can be triggered later
       deferredPrompt = e;
 
-      // Show install prompt after 3 seconds
-      setTimeout(() => {
-        if (deferredPrompt) {
-          deferredPrompt.prompt();
-          deferredPrompt.userChoice.then((choiceResult) => {
-            if (choiceResult.outcome === 'accepted') {
-              console.log('✅ User accepted the install prompt');
-            } else {
-              console.log('❌ User dismissed the install prompt');
-            }
-            deferredPrompt = null;
-          });
-        }
-      }, 3000);
+      // Show the install button
+      if (installContainer) {
+        installContainer.style.display = 'block';
+        console.log('✅ Install button is now visible');
+      }
     });
 
+    // Handle install button click
+    if (installButton) {
+      installButton.addEventListener('click', async () => {
+        console.log('👆 Install button clicked');
+
+        if (!deferredPrompt) {
+          console.log('❌ No install prompt available');
+          alert('This app is either already installed or cannot be installed on this device.');
+          return;
+        }
+
+        // Show the install prompt
+        deferredPrompt.prompt();
+
+        // Wait for the user to respond to the prompt
+        const { outcome } = await deferredPrompt.userChoice;
+
+        if (outcome === 'accepted') {
+          console.log('✅ User accepted the install prompt');
+        } else {
+          console.log('❌ User dismissed the install prompt');
+        }
+
+        // Clear the deferredPrompt
+        deferredPrompt = null;
+
+        // Hide the install button
+        installContainer.style.display = 'none';
+      });
+    }
+
     window.addEventListener('appinstalled', () => {
-      console.log('✅ PWA was installed');
+      console.log('🎉 PWA was successfully installed!');
+
+      // Hide the install button
+      if (installContainer) {
+        installContainer.style.display = 'none';
+      }
     });
+
+    // Debug information
+    console.log('🔍 PWA Debug Info:');
+    console.log('- Service Worker supported:', 'serviceWorker' in navigator);
+    console.log('- Current URL:', window.location.href);
+    console.log('- Is HTTPS:', window.location.protocol === 'https:');
+    console.log('- Is localhost:', window.location.hostname === 'localhost');
   </script>
 </body>
 </html>

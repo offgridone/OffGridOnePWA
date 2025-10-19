@@ -357,6 +357,46 @@ body {
   font-size: 24px;
 }
 
+/* ===== Install Banner ===== */
+.install-container {
+  padding: var(--spacing-md);
+  animation: slideDown 300ms ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.install-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: linear-gradient(135deg, rgba(0, 137, 123, 0.1), rgba(0, 137, 123, 0.05));
+  border: 2px solid var(--primary-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.install-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex: 1;
+}
+
+.install-banner .primary-button {
+  flex-shrink: 0;
+}
+
 /* ===== Updates Container ===== */
 .updates-container {
   padding: 0 var(--spacing-md) var(--spacing-lg);

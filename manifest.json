@@ -1,0 +1,40 @@
+{
+  "name": "OffGridOne Control",
+  "short_name": "OffGridOne",
+  "description": "Management app for updating OffGridOne devices",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#00897B",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/images/splash.png",
+      "sizes": "1683x815",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "OffGridOne Control - Update Device"
+    },
+    {
+      "src": "assets/images/splash.png",
+      "sizes": "1683x815",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "OffGridOne Control - Desktop View"
+    }
+  ]
+}

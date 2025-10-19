@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Management app for updating OffGridOne devices">
+  <meta name="theme-color" content="#00897B">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="OffGridOne">
+
+  <title>OffGridOne Control</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Icons -->
+  <link rel="icon" type="image/png" href="assets/images/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/images/icon-192.png">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!-- JSZip Library for ZIP file handling -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+  <!-- Splash Screen -->
+  <div id="splash-screen" class="splash-screen">
+    <img src="assets/images/splash.png" alt="OffGridOne" class="splash-image">
+  </div>
+
+  <!-- Main App Container -->
+  <div id="app-container" class="app-container hidden">
+    <!-- App Bar -->
+    <header class="app-bar">
+      <div class="app-bar-content">
+        <img src="assets/images/OffGridOne-horizontal.png" alt="OffGridOne" class="app-logo">
+        <div class="tab-bar">
+          <button class="tab-button active" data-tab="update-device">
+            <span class="material-icons">system_update</span>
+            <span class="tab-label">Update Device</span>
+          </button>
+          <button class="tab-button" data-tab="instructions">
+            <span class="material-icons">help_outline</span>
+            <span class="tab-label">Instructions</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tab Content Container -->
+    <main class="tab-content-container">
+      <!-- Update Device Tab -->
+      <div id="update-device-tab" class="tab-content active">
+        <!-- Connection Status Bar -->
+        <div id="connection-status" class="status-bar disconnected">
+          <span class="material-icons status-icon">warning</span>
+          <div class="status-text">
+            <div class="status-primary">Not Connected</div>
+            <div class="status-secondary">Tap refresh to connect</div>
+          </div>
+          <div class="status-actions">
+            <button id="refresh-connection-btn" class="icon-button" title="Refresh Connection">
+              <span class="material-icons">refresh</span>
+            </button>
+            <button id="network-control-btn" class="icon-button" title="Network Control">
+              <span class="material-icons">settings</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Update Files Section -->
+        <div class="updates-container">
+          <!-- File Selection -->
+          <div class="section-header">
+            <button id="select-files-btn" class="primary-button">
+              <span class="material-icons">add</span>
+              Select Update Files
+            </button>
+          </div>
+          <input type="file" id="file-input" accept=".zip" multiple style="display: none;">
+
+          <!-- Pending Updates -->
+          <div class="updates-section">
+            <h3 class="section-title">Pending Updates (<span id="pending-count">0</span>)</h3>
+            <div id="pending-updates-list" class="updates-list">
+              <div class="empty-state">
+                <span class="material-icons">folder_open</span>
+                <p>No pending updates</p>
+                <p class="empty-state-hint">Select update files to get started</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Applied Updates -->
+          <div class="updates-section">
+            <h3 class="section-title">Applied Updates (<span id="applied-count">0</span>)</h3>
+            <div id="applied-updates-list" class="updates-list">
+              <div class="empty-state">
+                <span class="material-icons">check_circle</span>
+                <p>No applied updates</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Instructions Tab -->
+      <div id="instructions-tab" class="tab-content">
+        <div class="instructions-container">
+          <!-- Header -->
+          <div class="instructions-header">
+            <span class="material-icons instructions-icon">help_outline</span>
+            <div class="instructions-title-section">
+              <h1>How to Use OffGridOne Control</h1>
+              <p>Follow these steps to update your OffGridOne device</p>
+            </div>
+          </div>
+
+          <!-- Steps -->
+          <div class="instruction-steps">
+            <!-- Step 1 -->
+            <div class="instruction-card">
+              <div class="step-badge" style="background-color: #3F51B5;">1</div>
+              <div class="step-content">
+                <h3 class="step-title">
+                  <span class="material-icons step-icon" style="color: #3F51B5;">download</span>
+                  Get Update Files
+                </h3>
+                <div class="step-details">
+                  <div class="instruction-step">
+                    <span class="material-icons step-bullet">arrow_right</span>
+                    <p>Visit the <a href="https://www.offgridone.com/category/updates" target="_blank" rel="noopener">OffGridOne website</a> to download update files</p>
+                  </div>
+                  <div class="instruction-step">
+                    <span class="material-icons step-bullet">arrow_right</span>
+                    <p>Save the ZIP files to your device</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="instruction-card">
+              <div class="step-badge" style="background-color: #2196F3;">2</div>
+              <div class="step-content">
+                <h3 class="step-title">
+                  <span class="material-icons step-icon" style="color: #2196F3;">power_settings_new</span>
+                  Set Up Device Connection
+                </h3>
+                <div class="step-details">
+                  <div class="instruction-step">
+                    <span class="material-icons step-bullet">arrow_right</span>
+                    <p>Power on your OffGridOne device and wait for it to boot</p>
+                  </div>
+                  <div class="instruction-step">
+                    <span class="material-icons step-bullet">arrow_right</span>
+                    <p>Connect to your device's WiFi network or ensure both devices are on the same network</p>
+                  </div>
+                  <div class="instruction-step">
+                    <span class="material-icons step-bullet">arrow_right</span>
+                    <p>Navigate to the Update Device tab</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="instruction-card">
+              <div class="step-badge" style="background-color: #4CAF50;">3</div>
+              <div class="step-content">
+                <h3 class="step-title">
+                  <span class="material-icons step-icon" style="color: #4CAF50;">folder_open</span>
+                  Select Update Files
+                </h3>
+                <div class="step-details">
+                  <div class="instruction-step">
+                    <span class="material-icons step-bullet">arrow_right</span>
+                    <p>Tap the "Select Update Files" button in the Update Device tab</p>
+                  </div>
+                  <div class="instruction-step">
+                    <span class="material-icons step-bullet">arrow_right</span>
+                    <p>Choose one or more ZIP update files from your device</p>
+                  </div>
+                  <div class="instruction-step">
+                    <span class="material-icons step-bullet">arrow_right</span>
+                    <p>The files will appear in the Pending Updates list</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="instruction-card">
+              <div class="step-badge" style="background-color: #FF9800;">4</div>
+              <div class="step-content">
+                <h3 class="step-title">
+                  <span class="material-icons step-icon" style="color: #FF9800;">info_outline</span>
+                  Review Update Information
+                </h3>
+                <div class="step-details">
+                  <div class="instruction-step">
+                    <span class="material-icons step-bullet">arrow_right</span>
+                    <p>Tap on any update file to view its details</p>
+                  </div>
+                  <div class="instruction-step">
+                    <span class="material-icons step-bullet">arrow_right</span>
+                    <p>Review what will be installed, updated, or removed</p>
+                  </div>
+                  <div class="instruction-step">
+                    <span class="material-icons step-bullet">arrow_right</span>
+                    <p>Check the version number and file size</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="instruction-card">
+              <div class="step-badge" style="background-color: #9C27B0;">5</div>
+              <div class="step-content">
+                <h3 class="step-title">
+                  <span class="material-icons step-icon" style="color: #9C27B0;">play_arrow</span>
+                  Apply Updates
+                </h3>
+                <div class="step-details">
+                  <div class="instruction-step">
+                    <span class="material-icons step-bullet">arrow_right</span>
+                    <p>Ensure your device is connected (green status bar)</p>
+                  </div>
+                  <div class="instruction-step">
+                    <span class="material-icons step-bullet">arrow_right</span>
+                    <p>Tap the play button on the update you want to apply</p>
+                  </div>
+                  <div class="instruction-step">
+                    <span class="material-icons step-bullet">arrow_right</span>
+                    <p>Review the confirmation dialog carefully</p>
+                  </div>
+                  <div class="instruction-step">
+                    <span class="material-icons step-bullet">arrow_right</span>
+                    <p>Confirm to start the update process</p>
+                  </div>
+                  <div class="instruction-step warning">
+                    <span class="material-icons step-bullet">warning</span>
+                    <p>Do not disconnect during the update process</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Important Notes -->
+          <div class="info-box notes-box">
+            <div class="info-box-header">
+              <span class="material-icons">info</span>
+              <h3>Important Notes</h3>
+            </div>
+            <ul>
+              <li>Keep your device connected to power during updates</li>
+              <li>Updates may take several minutes depending on file size</li>
+              <li>Some updates may require a device restart to take effect</li>
+            </ul>
+          </div>
+
+          <!-- Troubleshooting -->
+          <div class="info-box troubleshooting-box">
+            <div class="info-box-header">
+              <span class="material-icons">build</span>
+              <h3>Troubleshooting</h3>
+            </div>
+            <ul>
+              <li><strong>Can't connect to device:</strong> Ensure both devices are on the same network and the management API is running</li>
+              <li><strong>Update fails:</strong> Check your internet connection and try again. Make sure the update file is not corrupted</li>
+              <li><strong>Store won't load:</strong> Check your internet connection and tap the retry button</li>
+              <li><strong>File not recognized:</strong> Ensure the file is a valid OffGridOne update ZIP file with proper metadata</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Network Control Modal -->
+  <div id="network-control-modal" class="modal hidden">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>
+          <span class="material-icons">settings</span>
+          Network Control
+        </h2>
+        <button class="close-modal-btn">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Connection Status -->
+        <div class="info-box" style="margin-bottom: 24px;">
+          <div class="info-box-header">
+            <span class="material-icons">info</span>
+            <p>Configure your device's WiFi network settings. The device will restart to apply changes.</p>
+          </div>
+        </div>
+
+        <!-- SSID Input -->
+        <div class="form-group">
+          <label for="wifi-ssid">
+            <span class="material-icons">wifi</span>
+            WiFi SSID
+          </label>
+          <input type="text"
+                 id="wifi-ssid"
+                 class="form-input"
+                 placeholder="Enter WiFi network name"
+                 value="offgridone">
+        </div>
+
+        <!-- Password Input -->
+        <div class="form-group">
+          <label for="wifi-password">
+            <span class="material-icons">lock</span>
+            WiFi Password
+          </label>
+          <input type="password"
+                 id="wifi-password"
+                 class="form-input"
+                 placeholder="Enter WiFi password">
+        </div>
+
+        <!-- Broadcast SSID Checkbox -->
+        <div class="form-group checkbox-group">
+          <label>
+            <input type="checkbox" id="broadcast-ssid">
+            <span>Do Not Broadcast SSID</span>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="secondary-button close-modal-btn">Cancel</button>
+        <button id="apply-network-btn" class="primary-button">Apply Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Generic Modal for dialogs -->
+  <div id="generic-modal" class="modal hidden">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title"></h2>
+        <button class="close-modal-btn">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div id="modal-body" class="modal-body"></div>
+      <div id="modal-footer" class="modal-footer"></div>
+    </div>
+  </div>
+
+  <!-- Progress Modal -->
+  <div id="progress-modal" class="modal hidden">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="progress-title">Processing...</h2>
+      </div>
+      <div class="modal-body">
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div id="progress-bar-fill" class="progress-bar-fill" style="width: 0%"></div>
+          </div>
+          <div class="progress-info">
+            <span id="progress-percentage">0%</span>
+            <span id="progress-detail"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="app.js"></script>
+
+  <!-- Register Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js')
+          .then(reg => console.log('Service Worker registered', reg))
+          .catch(err => console.log('Service Worker registration failed', err));
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/p4thkiller/Desktop/OffGridOneControl/**)",
+      "Bash(mkdir -p assets/images)",
+      "Bash(copy \"C:\\Users\\p4thkiller\\Desktop\\OffGridOneControl\\assets\\images\\appicon.png\" \"assets\\images\\appicon.png\")",
+      "Bash(copy \"C:\\Users\\p4thkiller\\Desktop\\OffGridOneControl\\assets\\images\\OffGridOne-horizontal.png\" \"assets\\images\\OffGridOne-horizontal.png\")",
+      "Bash(copy \"C:\\Users\\p4thkiller\\Desktop\\OffGridOneControl\\assets\\images\\splash.png\" \"assets\\images\\splash.png\")",
+      "Bash(python create_icons.py)",
+      "Bash(git init)",
+      "Bash(git add .)",
+      "Bash(git commit -m \"Initial PWA commit\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

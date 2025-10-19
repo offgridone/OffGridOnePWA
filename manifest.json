@@ -2,11 +2,12 @@
   "name": "OffGridOne Control",
   "short_name": "OffGridOne",
   "description": "Management app for updating OffGridOne devices",
-  "start_url": "./",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#FFFFFF",
   "theme_color": "#00897B",
-  "orientation": "portrait-primary",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "assets/images/icon-192.png",

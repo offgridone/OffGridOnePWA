@@ -9,7 +9,9 @@
       "Bash(python create_icons.py)",
       "Bash(git init)",
       "Bash(git add .)",
-      "Bash(git commit -m \"Initial PWA commit\")"
+      "Bash(git commit -m \"Initial PWA commit\")",
+      "Bash(git add -A)",
+      "Bash(git commit -m \"Fix PWA installability on Android\")"
     ],
     "deny": [],
     "ask": []

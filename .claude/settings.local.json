@@ -14,7 +14,8 @@
       "Bash(git commit -m \"Fix PWA installability on Android\")",
       "Bash(git branch -M main)",
       "Bash(git commit -m \"Add visible install button for Android PWA installation\")",
-      "Bash(git commit -m \"Fix offline functionality - improved service worker caching\")"
+      "Bash(git commit -m \"Fix offline functionality - improved service worker caching\")",
+      "Bash(git commit -m \"Allow API access to local device without internet connection\")"
     ],
     "deny": [],
     "ask": []

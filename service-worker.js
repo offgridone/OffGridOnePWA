@@ -1,4 +1,4 @@
-const CACHE_NAME = 'offgridone-v3';
+const CACHE_NAME = 'offgridone-v4';
 const urlsToCache = [
   './',
   './index.html',
@@ -32,26 +32,20 @@ self.addEventListener('install', event => {
   );
 });
 
-// Fetch event - Cache First strategy for app shell, Network First for API
+// Fetch event - Cache First strategy for app shell, bypass for API
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // Skip non-GET requests
-  if (event.request.method !== 'GET') {
+  // IMPORTANT: Don't intercept API calls to management.offgridone.net
+  // This allows the app to connect to the local device server even without internet
+  if (url.hostname === 'management.offgridone.net') {
+    console.log('[ServiceWorker] Bypassing service worker for API call:', event.request.url);
+    // Let the request go directly to the network (local device server)
     return;
   }
 
-  // Network First for API calls (management.offgridone.net)
-  if (url.hostname === 'management.offgridone.net') {
-    event.respondWith(
-      fetch(event.request)
-        .catch(() => {
-          return new Response('{"error": "Offline - API unavailable"}', {
-            status: 503,
-            headers: { 'Content-Type': 'application/json' }
-          });
-        })
-    );
+  // Skip non-GET requests
+  if (event.request.method !== 'GET') {
     return;
   }
 
@@ -75,7 +69,7 @@ self.addEventListener('fetch', event => {
             // Clone the response
             const responseToCache = response.clone();
 
-            // Cache the fetched response
+            // Cache the fetched response for future offline use
             caches.open(CACHE_NAME)
               .then(cache => {
                 cache.put(event.request, responseToCache);
